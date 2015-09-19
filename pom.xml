@@ -6,21 +6,27 @@
 	<artifactId>mmlib4j-imagej</artifactId>
 	<version>1.0</version>
 	<packaging>jar</packaging>
-	
-	<properties><mvn-version>3.3</mvn-version></properties>
+
+	<properties>
+		<mvn-version>3.3</mvn-version>
+		<jung-version>2.0.1</jung-version>
+	</properties>
 
 	<build>
 		<sourceDirectory>src</sourceDirectory>
+		<directory>build</directory>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.3</version>
+				<version>${mvn-version}</version>
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
 				</configuration>
 			</plugin>
+			
+			<!-- Plugin para gerar o jar com todas as dependências dentro -->
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<executions>
@@ -38,6 +44,22 @@
 					<finalName>MMLib4J_v1</finalName>
 					<appendAssemblyId>false</appendAssemblyId>
 				</configuration>
+			</plugin>
+			
+			<!-- Plugin para copiar as dependencias no diretorio lib -->
+			<plugin>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>install</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>lib</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
@@ -102,10 +124,11 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+
 		<dependency>
 			<groupId>net.sf.jung</groupId>
 			<artifactId>jung-algorithms</artifactId>
-			<version>2.0.1</version>
+			<version>${jung-version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.apache.servicemix.bundles</groupId>
@@ -116,17 +139,17 @@
 		<dependency>
 			<groupId>net.sf.jung</groupId>
 			<artifactId>jung-api</artifactId>
-			<version>2.0.1</version>
+			<version>${jung-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.jung</groupId>
 			<artifactId>jung-graph-impl</artifactId>
-			<version>2.0.1</version>
+			<version>${jung-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.jung</groupId>
 			<artifactId>jung-visualization</artifactId>
-			<version>2.0.1</version>
+			<version>${jung-version}</version>
 		</dependency>
 
 		<dependency>
