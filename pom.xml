@@ -6,8 +6,11 @@
 	<artifactId>mmlib4j-imagej</artifactId>
 	<version>1.0</version>
 	<packaging>jar</packaging>
+	
+	<properties><mvn-version>3.3</mvn-version></properties>
 
 	<build>
+		<sourceDirectory>src</sourceDirectory>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
