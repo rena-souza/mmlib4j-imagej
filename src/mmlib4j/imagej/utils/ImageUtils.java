@@ -19,6 +19,13 @@ public class ImageUtils {
 	
 	private static WindowImages win = null;
 	
+	public static ImagePlus openRGB(){
+		ImagePlus plus = IJ.openImage();
+		plus.setProcessor(plus.getProcessor().convertToRGB());
+		plus.show();
+		return plus;
+	}
+	
 	public static ImagePlus openGrayScale(){
 		ImagePlus plus = IJ.openImage();
 		plus.setProcessor( plus.getProcessor().convertToByteProcessor() );
