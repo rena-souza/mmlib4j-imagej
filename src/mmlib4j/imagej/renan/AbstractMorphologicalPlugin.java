@@ -75,7 +75,6 @@ public abstract class AbstractMorphologicalPlugin extends AbstractFilterPlugin {
 	}
 	
 	/* Getters and Setters */
-	
 	public void setImgPlus(ImagePlus imgPlus) {
 		this.imgPlus = imgPlus;
 	}

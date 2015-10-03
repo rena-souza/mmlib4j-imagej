@@ -1,12 +1,8 @@
 package mmlib4j;
 
 import ij.ImagePlus;
-import ij.gui.GenericDialog;
-import ij.plugin.filter.PlugInFilter;
-import ij.process.ByteProcessor;
-import ij.process.ImageProcessor;
 import mmlib4j.filtering.ToggleMapping;
-import mmlib4j.imagej.utils.ImageJAdapter;
+import mmlib4j.imagej.renan.AbstractRadiusMorphologicalPlugin;
 import mmlib4j.imagej.utils.ImageUtils;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.utils.AdjacencyRelation;
@@ -17,33 +13,16 @@ import mmlib4j.utils.AdjacencyRelation;
  *
  * Graphic User Interface by ImageJ
  */
-public class Morphological_ToggleMapping implements PlugInFilter {
-	
-	double raio;
-	ImagePlus imgPlus;
-	
-	public int setup(String arg, ImagePlus imp) {
-		
-		GenericDialog tela = new GenericDialog("Toggle mapping (erosion/dilation)");
-		tela.addNumericField("Radius", 1.5, 1);
-		tela.showDialog();
-		if(tela.wasCanceled()){
-			return PlugInFilter.DONE;
-		}
-		imgPlus = imp;
-		raio = tela.getNextNumber();
-		return PlugInFilter.DOES_8G;
+public class Morphological_ToggleMapping extends AbstractRadiusMorphologicalPlugin {
+
+	@Override
+	public GrayScaleImage filterImage(GrayScaleImage image) {
+		return  ToggleMapping.toggleMapping(image, AdjacencyRelation.getCircular(getRadius()));
 	}
-	
-	public void run(ImageProcessor ip) { 
-		ImageUtils.initMMorph4J();
-		GrayScaleImage imgOut = ToggleMapping.toggleMapping(ImageJAdapter.toGrayScaleImage((ByteProcessor) ip), AdjacencyRelation.getCircular(raio));
-		
-		imgPlus.setProcessor("Toggle mapping", ImageJAdapter.toByteProcessor(imgOut));
-		//ImagePlus plus = new ImagePlus("Morphological Closing", ImageJAdapter.toByteProcessor(imgOut));
-		//plus.show();
-		
-		
+
+	@Override
+	public String getPluginName() {
+		return "Toggle mapping (erosion/dilation)";
 	}
 	
 	public static void main(String args[]){
@@ -52,4 +31,6 @@ public class Morphological_ToggleMapping implements PlugInFilter {
 		plugin.setup(null, plus);
 		plugin.run(plus.getProcessor());
 	}
+
+	
 }
