@@ -3,7 +3,7 @@ package mmlib4j;
 import ij.IJ;
 import ij.ImagePlus;
 import mmlib4j.filtering.MorphologicalOperators;
-import mmlib4j.imagej.renan.AbstractRadiusMorphologicalPlugin;
+import mmlib4j.imagej.filters.AbstractRadiusMorphologicalPlugin;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.utils.AdjacencyRelation;
 

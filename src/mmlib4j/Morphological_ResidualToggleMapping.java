@@ -1,12 +1,8 @@
 package mmlib4j;
 
 import ij.ImagePlus;
-import ij.gui.GenericDialog;
-import ij.plugin.filter.PlugInFilter;
-import ij.process.ByteProcessor;
-import ij.process.ImageProcessor;
 import mmlib4j.filtering.ToggleMapping;
-import mmlib4j.imagej.utils.ImageJAdapter;
+import mmlib4j.imagej.filters.AbstractRadiusMorphologicalPlugin;
 import mmlib4j.imagej.utils.ImageUtils;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.utils.AdjacencyRelation;
@@ -17,34 +13,18 @@ import mmlib4j.utils.AdjacencyRelation;
  *
  * Graphic User Interface by ImageJ
  */
-public class Morphological_ResidualToggleMapping implements PlugInFilter {
+public class Morphological_ResidualToggleMapping extends AbstractRadiusMorphologicalPlugin {
 	
-	double raio;
-	ImagePlus imgPlus;
-	
-	public int setup(String arg, ImagePlus imp) {
-		
-		GenericDialog tela = new GenericDialog("Residual toggle mapping (erosion/dilation)");
-		tela.addNumericField("Radius", 1.5, 1);
-		tela.showDialog();
-		if(tela.wasCanceled()){
-			return PlugInFilter.DONE;
-		}
-		imgPlus = imp;
-		raio = tela.getNextNumber();
-		return PlugInFilter.DOES_8G;
+	@Override
+	public String getPluginName() {
+		return "Residual toggle mapping (erosion/dilation)";
 	}
 	
-	public void run(ImageProcessor ip) { 
-		ImageUtils.initMMorph4J();
-		GrayScaleImage imgOut = ToggleMapping.toggleMappingResidue(ImageJAdapter.toGrayScaleImage((ByteProcessor) ip), AdjacencyRelation.getCircular(raio));
-		
-		imgPlus.setProcessor("Residual toggle mapping", ImageJAdapter.toByteProcessor(imgOut));
-		//ImagePlus plus = new ImagePlus("Morphological Closing", ImageJAdapter.toByteProcessor(imgOut));
-		//plus.show();
-		
-		
+	@Override
+	public GrayScaleImage filterImage(GrayScaleImage image) {
+		return ToggleMapping.toggleMappingResidue(image, AdjacencyRelation.getCircular(getRadius()));
 	}
+
 	
 	public static void main(String args[]){
 		ImagePlus plus = ImageUtils.openGrayScale();
@@ -52,4 +32,5 @@ public class Morphological_ResidualToggleMapping implements PlugInFilter {
 		plugin.setup(null, plus);
 		plugin.run(plus.getProcessor());
 	}
+	
 }

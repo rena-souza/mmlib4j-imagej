@@ -1,13 +1,9 @@
 package mmlib4j;
 
+import ij.IJ;
 import ij.ImagePlus;
-import ij.gui.GenericDialog;
-import ij.plugin.filter.PlugInFilter;
-import ij.process.ByteProcessor;
-import ij.process.ImageProcessor;
 import mmlib4j.filtering.MorphologicalOperators;
-import mmlib4j.imagej.utils.ImageJAdapter;
-import mmlib4j.imagej.utils.ImageUtils;
+import mmlib4j.imagej.filters.AbstractRadiusMorphologicalPlugin;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.utils.AdjacencyRelation;
 
@@ -17,34 +13,21 @@ import mmlib4j.utils.AdjacencyRelation;
  *
  * Graphic User Interface by ImageJ
  */
-public class Morphological_external_gradient implements PlugInFilter {
+public class Morphological_external_gradient extends AbstractRadiusMorphologicalPlugin {
 	
-	double raio;
-	ImagePlus imgPlus;
 	
-	public int setup(String arg, ImagePlus imp) {
-		GenericDialog tela = new GenericDialog("Morphological Gradient (external)");
-		tela.addNumericField("Radius", 1.5, 1);
-		tela.showDialog();
-		if(tela.wasCanceled()){
-			return PlugInFilter.DONE;
-		}
-		imgPlus = imp;
-		raio = tela.getNextNumber();
-		return PlugInFilter.DOES_8G;
+	@Override
+	public String getPluginName() {
+		return "Morphological Gradient (external)";
 	}
 	
-	public void run(ImageProcessor ip) { 
-		ImageUtils.initMMorph4J();
-		GrayScaleImage imgOut = MorphologicalOperators.gradientExternal(ImageJAdapter.toGrayScaleImage((ByteProcessor) ip), AdjacencyRelation.getCircular(raio));
-		imgPlus.setProcessor("Morphological Gradient (external)", ImageJAdapter.toByteProcessor(imgOut));
-		//ImagePlus plus = new ImagePlus("Morphological Gradient", ImageJAdapter.toByteProcessor(imgOut));
-		//plus.show();
-		
+	@Override
+	public GrayScaleImage filterImage(GrayScaleImage image) {
+		return MorphologicalOperators.gradientExternal(image, AdjacencyRelation.getCircular(getRadius()));
 	}
 	
 	public static void main(String args[]){
-		ImagePlus plus = ImageUtils.openGrayScale();
+		ImagePlus plus = IJ.openImage();
 		Morphological_external_gradient plugin = new Morphological_external_gradient();
 		plugin.setup(null, plus);
 		plugin.run(plus.getProcessor());

@@ -1,4 +1,4 @@
-package mmlib4j.imagej.renan;
+package mmlib4j.imagej.filters;
 
 import ij.ImagePlus;
 import ij.plugin.filter.PlugInFilter;
