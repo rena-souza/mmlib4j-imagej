@@ -35,7 +35,7 @@ public class Morphological_dilation extends AbstractMorphologicalPlugin {
 		if(tela.wasCanceled()){
 			return PlugInFilter.DONE;
 		}
-		imgPlus = imp;
+		setImgPlus(imp);
 		raio = tela.getNextNumber();
 		return PlugInFilter.DOES_8G | PlugInFilter.DOES_RGB;
 	}
