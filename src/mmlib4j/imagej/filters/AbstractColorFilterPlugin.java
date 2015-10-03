@@ -1,7 +1,5 @@
 package mmlib4j.imagej.filters;
 
-import ij.ImagePlus;
-import ij.gui.GenericDialog;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
@@ -12,40 +10,8 @@ import mmlib4j.imagej.utils.ImageUtils;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 
-/**
- * Abstract Morphological filter plugin
- * 
- * Apply the filter for 8bit image color and rgb image color
- * 
- * @author rsouza
- */
-public abstract class AbstractMorphologicalPlugin extends AbstractFilterPlugin implements RadiusPlugin{
-
-	private ImagePlus imgPlus;
-	private double radius;
+public abstract class AbstractColorFilterPlugin extends AbstractFilterPlugin implements ColorFilterPlugin {
 	
-	@Override
-	public int accepts() {
-		return PlugInFilter.DOES_8G | PlugInFilter.DOES_RGB;
-	};
-	
-	@Override
-	public boolean initParameters() {
-		GenericDialog tela = new GenericDialog(getPluginName());
-		tela.addNumericField("Radius", 1.5, 1);
-		tela.showDialog();
-		if(tela.wasCanceled()){
-			return false;
-		}
-		radius = tela.getNextNumber();
-		return true;
-	}
-	
-	@Override
-	public double getRadius(){
-		return radius;
-	}
-
 	@Override
 	public void run(ImageProcessor arg0) {
 		if (arg0.getClass().isAssignableFrom(ij.process.ColorProcessor.class))
@@ -82,7 +48,7 @@ public abstract class AbstractMorphologicalPlugin extends AbstractFilterPlugin i
 	private byte[] getPixels(ColorProcessor cp, Channel channel){
 		return cp.getChannel(channel.value());
 	}
-
+	
 	public void run(ByteProcessor bp) {
 		ImageUtils.initMMorph4J();
 		GrayScaleImage output = filterImage(ImageJAdapter.toGrayScaleImage(bp));
@@ -93,14 +59,9 @@ public abstract class AbstractMorphologicalPlugin extends AbstractFilterPlugin i
 		return ImageFactory.createGrayScaleImage(depth, pixels, width, height);
 	}
 	
-	/* Getters and Setters */
-	public void setImgPlus(ImagePlus imgPlus) {
-		this.imgPlus = imgPlus;
-	}
-	
 	@Override
-	public ImagePlus getImgPlus() {
-		return imgPlus;
-	}
-
+	public int accepts() {
+		return PlugInFilter.DOES_8G | PlugInFilter.DOES_RGB;
+	};
+	
 }

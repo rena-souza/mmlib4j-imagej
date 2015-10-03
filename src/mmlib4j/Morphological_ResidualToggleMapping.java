@@ -2,7 +2,7 @@ package mmlib4j;
 
 import ij.ImagePlus;
 import mmlib4j.filtering.ToggleMapping;
-import mmlib4j.imagej.filters.AbstractMorphologicalPlugin;
+import mmlib4j.imagej.filters.AbstractRadiusPlugin;
 import mmlib4j.imagej.utils.ImageUtils;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.utils.AdjacencyRelation;
@@ -13,7 +13,7 @@ import mmlib4j.utils.AdjacencyRelation;
  *
  * Graphic User Interface by ImageJ
  */
-public class Morphological_ResidualToggleMapping extends AbstractMorphologicalPlugin {
+public class Morphological_ResidualToggleMapping extends AbstractRadiusPlugin {
 	
 	@Override
 	public String getPluginName() {

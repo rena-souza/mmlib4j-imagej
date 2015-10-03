@@ -19,4 +19,6 @@ public abstract class AbstractFilterPlugin implements FilterPlugin{
 		getImgPlus().setProcessor(getPluginName(), output);
 		getImgPlus().show();
 	}
+	
+	
 }
