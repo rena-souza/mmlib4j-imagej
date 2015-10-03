@@ -1,6 +1,7 @@
 package mmlib4j.imagej.filters;
 
 import ij.ImagePlus;
+import ij.gui.GenericDialog;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
@@ -18,14 +19,32 @@ import mmlib4j.images.impl.ImageFactory;
  * 
  * @author rsouza
  */
-public abstract class AbstractMorphologicalPlugin extends AbstractFilterPlugin {
+public abstract class AbstractMorphologicalPlugin extends AbstractFilterPlugin implements RadiusPlugin{
 
 	private ImagePlus imgPlus;
+	private double radius;
 	
 	@Override
 	public int accepts() {
 		return PlugInFilter.DOES_8G | PlugInFilter.DOES_RGB;
 	};
+	
+	@Override
+	public boolean initParameters() {
+		GenericDialog tela = new GenericDialog(getPluginName());
+		tela.addNumericField("Radius", 1.5, 1);
+		tela.showDialog();
+		if(tela.wasCanceled()){
+			return false;
+		}
+		radius = tela.getNextNumber();
+		return true;
+	}
+	
+	@Override
+	public double getRadius(){
+		return radius;
+	}
 
 	@Override
 	public void run(ImageProcessor arg0) {

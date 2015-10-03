@@ -3,7 +3,7 @@ package mmlib4j;
 import ij.IJ;
 import ij.ImagePlus;
 import mmlib4j.filtering.MorphologicalOperators;
-import mmlib4j.imagej.filters.AbstractRadiusMorphologicalPlugin;
+import mmlib4j.imagej.filters.AbstractMorphologicalPlugin;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.utils.AdjacencyRelation;
 
@@ -13,7 +13,7 @@ import mmlib4j.utils.AdjacencyRelation;
  *
  * Graphic User Interface by ImageJ
  */
-public class Morphological_erosion extends AbstractRadiusMorphologicalPlugin {
+public class Morphological_erosion extends AbstractMorphologicalPlugin {
 	
 	@Override
 	public String getPluginName() {
