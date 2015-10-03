@@ -3,12 +3,8 @@ package mmlib4j;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.GenericDialog;
-import ij.plugin.filter.PlugInFilter;
-import ij.process.ByteProcessor;
 import mmlib4j.filtering.MorphologicalOperators;
 import mmlib4j.imagej.renan.AbstractMorphologicalPlugin;
-import mmlib4j.imagej.utils.ImageJAdapter;
-import mmlib4j.imagej.utils.ImageUtils;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.utils.AdjacencyRelation;
 
@@ -23,25 +19,24 @@ public class Morphological_dilation extends AbstractMorphologicalPlugin {
 	double raio;
 	
 	@Override
-	public String getFilterName() {
+	public String getPluginName() {
 		return "Dilation";
 	}
 	
 	@Override
-	public int setup(String arg, ImagePlus imp) {
+	public boolean initParameters() {
 		GenericDialog tela = new GenericDialog("Dilation");
 		tela.addNumericField("Radius", 1.5, 1);
 		tela.showDialog();
 		if(tela.wasCanceled()){
-			return PlugInFilter.DONE;
+			return false;
 		}
-		setImgPlus(imp);
 		raio = tela.getNextNumber();
-		return PlugInFilter.DOES_8G | PlugInFilter.DOES_RGB;
+		return true;
 	}
 	
 	@Override
-	public GrayScaleImage doProcess(GrayScaleImage image) {
+	public GrayScaleImage filterImage(GrayScaleImage image) {
 		return MorphologicalOperators.dilation(image, AdjacencyRelation.getCircular(raio));
 	}
 	

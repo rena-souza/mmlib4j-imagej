@@ -1,13 +1,10 @@
 package mmlib4j;
 
+import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.GenericDialog;
-import ij.plugin.filter.PlugInFilter;
-import ij.process.ByteProcessor;
-import ij.process.ImageProcessor;
 import mmlib4j.filtering.MorphologicalOperators;
-import mmlib4j.imagej.utils.ImageJAdapter;
-import mmlib4j.imagej.utils.ImageUtils;
+import mmlib4j.imagej.renan.AbstractMorphologicalPlugin;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.utils.AdjacencyRelation;
 
@@ -17,36 +14,37 @@ import mmlib4j.utils.AdjacencyRelation;
  *
  * Graphic User Interface by ImageJ
  */
-public class Morphological_erosion implements PlugInFilter {
+public class Morphological_erosion extends AbstractMorphologicalPlugin {
 	
 	double raio;
-	ImagePlus imgPlus;
 	
-	public int setup(String arg, ImagePlus imp) {
+	@Override
+	public String getPluginName() {
+		return "Erosion"; 
+	}
+	
+	@Override
+	public boolean initParameters() {
 		GenericDialog tela = new GenericDialog("Erosion");
 		tela.addNumericField("Radius", 1.5, 1);
 		tela.showDialog();
 		if(tela.wasCanceled()){
-			return PlugInFilter.DONE;
+			return false;
 		}
-		imgPlus = imp;
 		raio = tela.getNextNumber();
-		return PlugInFilter.DOES_8G;
+		return true;
 	}
 	
-	public void run(ImageProcessor ip) { 
-		ImageUtils.initMMorph4J();
-		GrayScaleImage imgOut = MorphologicalOperators.erosion(ImageJAdapter.toGrayScaleImage((ByteProcessor) ip), AdjacencyRelation.getCircular(raio));
-		imgPlus.setProcessor("Dilation", ImageJAdapter.toByteProcessor(imgOut));
-		//ImagePlus plus = new ImagePlus("Erosion", ImageJAdapter.toByteProcessor(imgOut));
-		//plus.show();
-		
+	@Override
+	public GrayScaleImage filterImage(GrayScaleImage image) {
+		return  MorphologicalOperators.erosion(image, AdjacencyRelation.getCircular(raio));
 	}
-	
+
 	public static void main(String args[]){
-		ImagePlus plus = ImageUtils.openGrayScale();
+		ImagePlus plus = IJ.openImage();
 		Morphological_erosion plugin = new Morphological_erosion();
 		plugin.setup(null, plus);
 		plugin.run(plus.getProcessor());
 	}
+
 }

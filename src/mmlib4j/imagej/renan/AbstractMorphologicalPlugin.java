@@ -18,13 +18,14 @@ import mmlib4j.images.impl.ImageFactory;
  * 
  * @author rsouza
  */
-public abstract class AbstractMorphologicalPlugin implements PlugInFilter {
+public abstract class AbstractMorphologicalPlugin extends AbstractFilterPlugin {
 
 	private ImagePlus imgPlus;
-
-	public abstract GrayScaleImage doProcess(GrayScaleImage bp);
-
-	public abstract String getFilterName();
+	
+	@Override
+	public int accepts() {
+		return PlugInFilter.DOES_8G | PlugInFilter.DOES_RGB;
+	};
 
 	@Override
 	public void run(ImageProcessor arg0) {
@@ -38,48 +39,50 @@ public abstract class AbstractMorphologicalPlugin implements PlugInFilter {
 	}
 
 	public void run(ColorProcessor cp) {
-		byte pixelsR[] = cp.getChannel(Channel.RED.value());
-		byte pixelsG[] = cp.getChannel(Channel.GREEN.value());
-		byte pixelsB[] = cp.getChannel(Channel.BLUE.value());
 		int width = cp.getWidth();
 		int height = cp.getHeight();
 		int depth = 8;
 
-		GrayScaleImage imageR = getGrayScaleImage(depth, pixelsR, width, height);
-		GrayScaleImage imageG = getGrayScaleImage(depth, pixelsG, width, height);
-		GrayScaleImage imageB = getGrayScaleImage(depth, pixelsB, width, height);
+		GrayScaleImage imageR = getGrayScaleImage(depth, getPixels(cp, Channel.RED), width, height);
+		GrayScaleImage imageG = getGrayScaleImage(depth, getPixels(cp, Channel.GREEN), width, height);
+		GrayScaleImage imageB = getGrayScaleImage(depth, getPixels(cp, Channel.BLUE), width, height);
 
-		GrayScaleImage imgOutR = doProcess(imageR);
-		GrayScaleImage imgOutG = doProcess(imageG);
-		GrayScaleImage imgOutB = doProcess(imageB);
+		GrayScaleImage imgOutR = filterImage(imageR);
+		GrayScaleImage imgOutG = filterImage(imageG);
+		GrayScaleImage imgOutB = filterImage(imageB);
 
 		ColorProcessor rgbOutput = new ColorProcessor(cp.getWidth(), cp.getHeight());
-		rgbOutput.setRGB((byte[]) imgOutR.getPixels(), (byte[]) imgOutG.getPixels(), (byte[]) imgOutB.getPixels());
+		rgbOutput.setRGB((byte[]) imgOutR.getPixels(), 
+					     (byte[]) imgOutG.getPixels(), 
+					     (byte[]) imgOutB.getPixels());
 
 		show(rgbOutput);
 
 	}
+	
+	private byte[] getPixels(ColorProcessor cp, Channel channel){
+		return cp.getChannel(channel.value());
+	}
 
 	public void run(ByteProcessor bp) {
 		ImageUtils.initMMorph4J();
-		GrayScaleImage output = doProcess(ImageJAdapter.toGrayScaleImage(bp));
+		GrayScaleImage output = filterImage(ImageJAdapter.toGrayScaleImage(bp));
 		show(ImageJAdapter.toByteProcessor(output));
 	}
 
 	private GrayScaleImage getGrayScaleImage(int depth, byte[] pixels, int width, int height) {
 		return ImageFactory.createGrayScaleImage(depth, pixels, width, height);
 	}
-
-	public void show(ImageProcessor output) {
-		System.out.println("Mostrando");
-		imgPlus.setProcessor(getFilterName(), output);
-		imgPlus.show();
-	}
 	
-	/* Getters and Setter */
+	/* Getters and Setters */
 	
 	public void setImgPlus(ImagePlus imgPlus) {
 		this.imgPlus = imgPlus;
+	}
+	
+	@Override
+	public ImagePlus getImgPlus() {
+		return imgPlus;
 	}
 
 }
