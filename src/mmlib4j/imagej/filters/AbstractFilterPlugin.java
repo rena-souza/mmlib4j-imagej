@@ -8,7 +8,6 @@ import ij.plugin.filter.PlugInFilter;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
-import mmlib4j.Morphological_closing;
 import mmlib4j.imagej.filters.annotations.NumericParameter;
 import mmlib4j.imagej.filters.annotations.Plugin;
 import mmlib4j.imagej.types.Channel;
@@ -71,11 +70,10 @@ private ImagePlus imgPlus;
 	@Override
 	public String getPluginName() {
 		Class<?> clazz = (Class<?>) this.getClass();
-		
-		if(clazz.getDeclaredAnnotation(Plugin.class) == null)
+		if(!clazz.isAnnotationPresent(Plugin.class))
 			return "mmlib4j - plugin";
 		
-		Plugin pluginAnnotarion = (Plugin) clazz.getDeclaredAnnotation(Plugin.class);
+		Plugin pluginAnnotarion = (Plugin) clazz.getAnnotation(Plugin.class);
 		return pluginAnnotarion.name();
 	}
 	
@@ -113,7 +111,7 @@ private ImagePlus imgPlus;
 	
 	private void addParameter(Field[] fields, GenericDialog dialog){
 		for(Field f : fields){
-			NumericParameter numericParameter = f.getDeclaredAnnotation(NumericParameter.class);
+			NumericParameter numericParameter = f.getAnnotation(NumericParameter.class);
 			if(numericParameter == null)
 				continue;
 			
@@ -123,7 +121,7 @@ private ImagePlus imgPlus;
 	
 	private void populateParameters(Field[] fields, GenericDialog dialog){
 		for(Field f : fields){
-			NumericParameter numericParameter = f.getDeclaredAnnotation(NumericParameter.class);
+			NumericParameter numericParameter = f.getAnnotation(NumericParameter.class);
 			if(numericParameter == null)
 				continue;
 			
