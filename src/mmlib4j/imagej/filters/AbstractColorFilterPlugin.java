@@ -5,12 +5,13 @@ import ij.plugin.filter.PlugInFilter;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
+import mmlib4j.imagej.filters.annotations.Plugin;
 import mmlib4j.imagej.types.Channel;
 import mmlib4j.imagej.utils.ImageJAdapter;
 import mmlib4j.imagej.utils.ImageUtils;
 import mmlib4j.images.GrayScaleImage;
 
-public abstract class AbstractColorFilterPlugin extends AbstractFilterPlugin implements ColorFilterPlugin, GrayScalePlugin {
+public abstract class AbstractColorFilterPlugin <T> extends AbstractFilterPlugin implements ColorFilterPlugin, GrayScalePlugin {
 	
 	private ImagePlus imgPlus;
 	
@@ -52,6 +53,18 @@ public abstract class AbstractColorFilterPlugin extends AbstractFilterPlugin imp
 	public int accepts() {
 		return PlugInFilter.DOES_8G | PlugInFilter.DOES_RGB;
 	};
+	
+	@Override
+	public String getPluginName() {
+		@SuppressWarnings("unchecked")
+		Class<T> clazz = (Class<T>) this.getClass();
+		
+		if(clazz.getDeclaredAnnotation(Plugin.class) == null)
+			return "mmlib4j - plugin";
+		
+		Plugin pluginAnnotarion = (Plugin) clazz.getDeclaredAnnotation(Plugin.class);
+		return pluginAnnotarion.name();
+	}
 	
 	@Override
 	public void setImgPlus(ImagePlus plus) {

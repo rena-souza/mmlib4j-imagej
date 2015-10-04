@@ -1,7 +1,11 @@
 package mmlib4j.imagej.filters;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Type;
+
 import ij.ImagePlus;
 import ij.gui.GenericDialog;
+import mmlib4j.imagej.filters.annotations.Parameter;
 
 public abstract class AbstractRadiusPlugin extends AbstractColorFilterPlugin implements RadiusPlugin {
 	
@@ -11,12 +15,38 @@ public abstract class AbstractRadiusPlugin extends AbstractColorFilterPlugin imp
 	@Override
 	public boolean initParameters() {
 		GenericDialog tela = new GenericDialog(getPluginName());
-		tela.addNumericField("Radius", initialRadius(), 1);
+//		tela.addNumericField("Radius", initialRadius(), 1);
+		Class<?> clazz = this.getClass();
+		for(Field f : clazz.getDeclaredFields()){
+			Parameter parameter = f.getDeclaredAnnotation(Parameter.class);
+			if(parameter == null)
+				continue;
+			
+			Class<?> type = parameter.type();
+			tela.addNumericField(parameter.name(), parameter.defaultValue(), parameter.digits());
+		}
+		
+		
 		tela.showDialog();
 		if(tela.wasCanceled()){
 			return false;
 		}
-		radius = tela.getNextNumber();
+		
+		for(Field f : clazz.getDeclaredFields()){
+			Parameter parameter = f.getDeclaredAnnotation(Parameter.class);
+			if(parameter == null)
+				continue;
+			
+			f.setAccessible(true);
+			try {
+				f.set(this, tela.getNextNumber());
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+
+		}
+		
+//		radius = tela.getNextNumber();
 		return true;
 	}
 	
