@@ -70,6 +70,14 @@ public class ImageJAdapter {
 		return ip;
 	}
 	
+	public static ColorProcessor toColorProcessor(int width, int height, GrayScaleImage red, GrayScaleImage green, GrayScaleImage blue){
+		ColorProcessor rgbOutput = new ColorProcessor(width, height);
+		rgbOutput.setRGB((byte[]) red.getPixels(), 
+					     (byte[]) green.getPixels(), 
+					     (byte[]) blue.getPixels());
+		return rgbOutput;
+	}
+	
 	public static ShortProcessor toShortProcessor(GrayScaleImage img){
 		ShortProcessor ip = new ShortProcessor(img.getWidth(), img.getHeight(), (short[]) img.getPixels(), null);
 		return ip;

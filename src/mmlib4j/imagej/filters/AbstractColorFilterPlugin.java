@@ -1,5 +1,6 @@
 package mmlib4j.imagej.filters;
 
+import ij.ImagePlus;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
@@ -8,9 +9,10 @@ import mmlib4j.imagej.types.Channel;
 import mmlib4j.imagej.utils.ImageJAdapter;
 import mmlib4j.imagej.utils.ImageUtils;
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.images.impl.ImageFactory;
 
-public abstract class AbstractColorFilterPlugin extends AbstractFilterPlugin implements ColorFilterPlugin {
+public abstract class AbstractColorFilterPlugin extends AbstractFilterPlugin implements ColorFilterPlugin, GrayScalePlugin {
+	
+	private ImagePlus imgPlus;
 	
 	@Override
 	public void run(ImageProcessor arg0) {
@@ -24,29 +26,20 @@ public abstract class AbstractColorFilterPlugin extends AbstractFilterPlugin imp
 	}
 
 	public void run(ColorProcessor cp) {
-		int width = cp.getWidth();
-		int height = cp.getHeight();
-		int depth = 8;
+		Splitter spliter = new Splitter(cp);
 
-		GrayScaleImage imageR = getGrayScaleImage(depth, getPixels(cp, Channel.RED), width, height);
-		GrayScaleImage imageG = getGrayScaleImage(depth, getPixels(cp, Channel.GREEN), width, height);
-		GrayScaleImage imageB = getGrayScaleImage(depth, getPixels(cp, Channel.BLUE), width, height);
+		GrayScaleImage imageR = spliter.getChannel(Channel.RED);
+		GrayScaleImage imageG = spliter.getChannel(Channel.GREEN);
+		GrayScaleImage imageB = spliter.getChannel(Channel.BLUE);
 
 		GrayScaleImage imgOutR = filterImage(imageR);
 		GrayScaleImage imgOutG = filterImage(imageG);
 		GrayScaleImage imgOutB = filterImage(imageB);
 
-		ColorProcessor rgbOutput = new ColorProcessor(cp.getWidth(), cp.getHeight());
-		rgbOutput.setRGB((byte[]) imgOutR.getPixels(), 
-					     (byte[]) imgOutG.getPixels(), 
-					     (byte[]) imgOutB.getPixels());
+		ColorProcessor rgbOutput = ImageJAdapter.toColorProcessor(cp.getWidth(), cp.getHeight(), imgOutR, imgOutG, imgOutB);
 
 		show(rgbOutput);
 
-	}
-	
-	private byte[] getPixels(ColorProcessor cp, Channel channel){
-		return cp.getChannel(channel.value());
 	}
 	
 	public void run(ByteProcessor bp) {
@@ -54,14 +47,19 @@ public abstract class AbstractColorFilterPlugin extends AbstractFilterPlugin imp
 		GrayScaleImage output = filterImage(ImageJAdapter.toGrayScaleImage(bp));
 		show(ImageJAdapter.toByteProcessor(output));
 	}
-
-	private GrayScaleImage getGrayScaleImage(int depth, byte[] pixels, int width, int height) {
-		return ImageFactory.createGrayScaleImage(depth, pixels, width, height);
-	}
 	
 	@Override
 	public int accepts() {
 		return PlugInFilter.DOES_8G | PlugInFilter.DOES_RGB;
 	};
 	
+	@Override
+	public void setImgPlus(ImagePlus plus) {
+		this.imgPlus = plus;
+	}
+
+	@Override
+	public ImagePlus getImgPlus() {
+		return imgPlus;
+	}
 }

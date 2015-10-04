@@ -2,11 +2,8 @@ package mmlib4j;
 
 import ij.ImagePlus;
 import ij.gui.GenericDialog;
-import ij.plugin.filter.PlugInFilter;
-import ij.process.ByteProcessor;
-import ij.process.ImageProcessor;
 import mmlib4j.filtering.MorphologicalOperators;
-import mmlib4j.imagej.utils.ImageJAdapter;
+import mmlib4j.imagej.filters.AbstractColorFilterPlugin;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.representation.tree.componentTree.ReconstructionMorphological;
 import mmlib4j.utils.AdjacencyRelation;
@@ -16,25 +13,25 @@ import mmlib4j.utils.AdjacencyRelation;
  *
  * Graphic User Interface by ImageJ
  */
-public class Opening_by_reconstruction implements PlugInFilter {
+public class Opening_by_reconstruction extends AbstractColorFilterPlugin {
 	
 	double raio;
 	double raioEE;
 	ImagePlus imgPlus;
 	
-	public void run(ImageProcessor ip) {
-		GrayScaleImage f = ImageJAdapter.toGrayScaleImage((ByteProcessor) ip);
-		GrayScaleImage g = MorphologicalOperators.opening(f, AdjacencyRelation.getCircular(raioEE));
-		ReconstructionMorphological rec = new ReconstructionMorphological(f, AdjacencyRelation.getCircular(raio), true);
-		GrayScaleImage imgOut = rec.reconstructionByDilation(g);
-		
-		imgPlus.setProcessor("Opening by reconstruction", ImageJAdapter.toByteProcessor(imgOut));
-		//ImagePlus imgPlus = new ImagePlus("Opening by reconstruction", ImageJAdapter.toByteProcessor(imgOut));
-		//imgPlus.show();
-		
-	}
+//	public void run(ImageProcessor ip) {
+//		GrayScaleImage f = ImageJAdapter.toGrayScaleImage((ByteProcessor) ip);
+//		GrayScaleImage g = MorphologicalOperators.opening(f, AdjacencyRelation.getCircular(raioEE));
+//		ReconstructionMorphological rec = new ReconstructionMorphological(f, AdjacencyRelation.getCircular(raio), true);
+//		GrayScaleImage imgOut = rec.reconstructionByDilation(g);
+//		
+//		imgPlus.setProcessor("Opening by reconstruction", ImageJAdapter.toByteProcessor(imgOut));
+//		//ImagePlus imgPlus = new ImagePlus("Opening by reconstruction", ImageJAdapter.toByteProcessor(imgOut));
+//		//imgPlus.show();
+//		
+//	}
 
-	 boolean showDialog() { 
+	 public boolean initParameters() { 
          GenericDialog gd = new GenericDialog("Morphological reconstruction based on marked image");
 
          gd.addNumericField("Adjacency relation [rec] (Radius)", 1.5, 1);
@@ -51,10 +48,17 @@ public class Opening_by_reconstruction implements PlugInFilter {
  		return true;
  }
 
-	public int setup(String arg, ImagePlus imp) {
-		 if (imp!=null && !showDialog()) return DONE;
-		 imgPlus = imp;
-		 return DOES_8G;
+	@Override
+	public GrayScaleImage filterImage(GrayScaleImage image) {
+		GrayScaleImage g = MorphologicalOperators.opening(image, AdjacencyRelation.getCircular(raioEE));
+		ReconstructionMorphological rec = new ReconstructionMorphological(image, AdjacencyRelation.getCircular(raio), true);
+		GrayScaleImage imgOut = rec.reconstructionByDilation(g);
+		return imgOut;
+	}
+
+	@Override
+	public String getPluginName() {
+		return "Opening by reconstruction";
 	}
 
 }

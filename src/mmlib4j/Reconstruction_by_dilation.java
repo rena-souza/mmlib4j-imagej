@@ -4,10 +4,7 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.WindowManager;
 import ij.gui.GenericDialog;
-import ij.plugin.filter.PlugInFilter;
-import ij.process.ByteProcessor;
-import ij.process.ImageProcessor;
-import mmlib4j.imagej.utils.ImageJAdapter;
+import mmlib4j.imagej.filters.AbstractReconstructionPlugin;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.representation.tree.componentTree.ReconstructionMorphological;
 import mmlib4j.utils.AdjacencyRelation;
@@ -17,24 +14,20 @@ import mmlib4j.utils.AdjacencyRelation;
  *
  * Graphic User Interface by ImageJ
  */
-public class Reconstruction_by_dilation implements PlugInFilter {
+public class Reconstruction_by_dilation extends AbstractReconstructionPlugin {
 	
-	ByteProcessor imgF;
-	ByteProcessor imgG;
 	double raio;
 	
-	public void run(ImageProcessor ip) {
-		GrayScaleImage f = ImageJAdapter.toGrayScaleImage(imgF);
-		GrayScaleImage g = ImageJAdapter.toGrayScaleImage(imgG);
-		ReconstructionMorphological rec = new ReconstructionMorphological(f, AdjacencyRelation.getCircular(raio), true);
-		GrayScaleImage imgOut = rec.reconstructionByDilation(g);
-		ImagePlus imgPlus = new ImagePlus("Reconstruction by dilation", ImageJAdapter.toByteProcessor(imgOut));
-		imgPlus.show();
-		
+	@Override
+	public GrayScaleImage reconstruct(GrayScaleImage imgF, GrayScaleImage imgG) {
+		ReconstructionMorphological rec = new ReconstructionMorphological(imgF, AdjacencyRelation.getCircular(raio), true);
+		GrayScaleImage imgOut = rec.reconstructionByDilation(imgG);
+		return imgOut;
 	}
 
-	 boolean showDialog() { 
-         GenericDialog gd = new GenericDialog("Morphological reconstruction based on marked image");
+	@Override
+	public boolean initParameters() {
+		 GenericDialog gd = new GenericDialog("Morphological reconstruction based on marked image");
          gd.addMessage("This plug-in calculates reconstruction by dilation");
 
 
@@ -67,20 +60,23 @@ public class Reconstruction_by_dilation implements PlugInFilter {
  		
  		ImagePlus imp1 = WindowManager.getImage(wList[i1Index]);
  		ImagePlus imp2 = WindowManager.getImage(wList[i2Index]);
+ 		
+ 		setFisrtImage(imp1.getProcessor());
+ 		setSecondImage(imp2.getProcessor());
+ 		
 
- 		if (imp1.getBitDepth()!=8 || imp2.getBitDepth()!=8) {
- 			IJ.showMessage("Error", "Only 8-bit images are supported");
- 			return false;
- 		}
+// 		if (imp1.getBitDepth()!=8 || imp2.getBitDepth()!=8) {
+// 			IJ.showMessage("Error", "Only 8-bit images are supported");
+// 			return false;
+// 		}
 
- 		imgF = (ByteProcessor) imp1.getProcessor();
- 		imgG =(ByteProcessor) imp2.getProcessor();
+ 		
  		return true;
- }
+	}
 
-	public int setup(String arg, ImagePlus imp) {
-		 if (imp!=null && !showDialog()) return DONE;
-		 return DOES_8G;
+	@Override
+	public String getPluginName() {
+		return "Reconstruction by dilation";
 	}
 
 }

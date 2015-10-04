@@ -11,13 +11,17 @@ public abstract class AbstractRadiusPlugin extends AbstractColorFilterPlugin imp
 	@Override
 	public boolean initParameters() {
 		GenericDialog tela = new GenericDialog(getPluginName());
-		tela.addNumericField("Radius", 1.5, 1);
+		tela.addNumericField("Radius", initialRadius(), 1);
 		tela.showDialog();
 		if(tela.wasCanceled()){
 			return false;
 		}
 		radius = tela.getNextNumber();
 		return true;
+	}
+	
+	public double initialRadius(){
+		return 1.5;
 	}
 
 	@Override
