@@ -8,7 +8,7 @@ import mmlib4j.imagej.types.Channel;
 import mmlib4j.imagej.utils.ImageJAdapter;
 import mmlib4j.images.GrayScaleImage;
 
-public abstract class AbstractReconstructionPlugin extends AbstractColorFilterPlugin{
+public abstract class AbstractReconstructionPlugin extends AbstractFilterPlugin{
 	
 	private ImageProcessor ipF;
 	private ImageProcessor ipG;

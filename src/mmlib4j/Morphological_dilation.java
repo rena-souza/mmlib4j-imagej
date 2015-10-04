@@ -3,8 +3,8 @@ package mmlib4j;
 import ij.IJ;
 import ij.ImagePlus;
 import mmlib4j.filtering.MorphologicalOperators;
-import mmlib4j.imagej.filters.AbstractRadiusPlugin;
-import mmlib4j.imagej.filters.annotations.Parameter;
+import mmlib4j.imagej.filters.AbstractFilterPlugin;
+import mmlib4j.imagej.filters.annotations.NumericParameter;
 import mmlib4j.imagej.filters.annotations.Plugin;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.utils.AdjacencyRelation;
@@ -17,14 +17,9 @@ import mmlib4j.utils.AdjacencyRelation;
  */
 
 @Plugin(name = "Dilation")
-public class Morphological_dilation extends AbstractRadiusPlugin {
+public class Morphological_dilation extends AbstractFilterPlugin {
 	
-//	@Override
-//	public String getPluginName() {
-//		return "Dilation";
-//	}
-	
-	@Parameter(name="radius", type = Double.class, defaultValue=1.5)
+	@NumericParameter(name="radius")
 	private double radius;
 	
 	@Override

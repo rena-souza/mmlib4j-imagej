@@ -4,11 +4,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Parameter {
-	
-	 Class<?> type();
+public @interface NumericParameter {
 	 String name();
-	 
-	 double defaultValue() default 1.0; 
-	 int digits() default 3;
+
+	 double defaultValue() default 1.5; 
+	 int digits() default 1;
 }

@@ -3,7 +3,9 @@ package mmlib4j;
 import ij.IJ;
 import ij.ImagePlus;
 import mmlib4j.filtering.MorphologicalOperators;
-import mmlib4j.imagej.filters.AbstractRadiusPlugin;
+import mmlib4j.imagej.filters.AbstractFilterPlugin;
+import mmlib4j.imagej.filters.annotations.NumericParameter;
+import mmlib4j.imagej.filters.annotations.Plugin;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.utils.AdjacencyRelation;
 
@@ -13,16 +15,16 @@ import mmlib4j.utils.AdjacencyRelation;
  *
  * Graphic User Interface by ImageJ
  */
-public class Morphological_erosion extends AbstractRadiusPlugin {
+
+@Plugin(name = "Erosion")
+public class Morphological_erosion extends AbstractFilterPlugin {
 	
-	@Override
-	public String getPluginName() {
-		return "Erosion"; 
-	}
-	
+	@NumericParameter(name="Radius")
+	private double radius;
+		
 	@Override
 	public GrayScaleImage filterImage(GrayScaleImage image) {
-		return  MorphologicalOperators.erosion(image, AdjacencyRelation.getCircular(getRadius()));
+		return  MorphologicalOperators.erosion(image, AdjacencyRelation.getCircular(radius));
 	}
 
 	public static void main(String args[]){

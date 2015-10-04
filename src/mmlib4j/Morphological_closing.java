@@ -2,7 +2,9 @@ package mmlib4j;
 
 import ij.ImagePlus;
 import mmlib4j.filtering.MorphologicalOperators;
-import mmlib4j.imagej.filters.AbstractRadiusPlugin;
+import mmlib4j.imagej.filters.AbstractFilterPlugin;
+import mmlib4j.imagej.filters.annotations.NumericParameter;
+import mmlib4j.imagej.filters.annotations.Plugin;
 import mmlib4j.imagej.utils.ImageUtils;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.utils.AdjacencyRelation;
@@ -13,22 +15,23 @@ import mmlib4j.utils.AdjacencyRelation;
  *
  * Graphic User Interface by ImageJ
  */
-public class Morphological_closing extends AbstractRadiusPlugin {
+@Plugin(name = "Closing")
+public class Morphological_closing extends AbstractFilterPlugin {
+	
+	@NumericParameter(name="Radius")
+	private double radius;
 
 	@Override
-	public String getPluginName() {
-		return "Closing";
+	public GrayScaleImage filterImage(GrayScaleImage image) {
+		return MorphologicalOperators.closing(image, AdjacencyRelation.getCircular(radius));
 	}
 	
-	@Override
-	public GrayScaleImage filterImage(GrayScaleImage image) {
-		return MorphologicalOperators.closing(image, AdjacencyRelation.getCircular(getRadius()));
-	}
-		
+
 	public static void main(String args[]){
 		ImagePlus plus = ImageUtils.openGrayScale();
 		Morphological_closing plugin = new Morphological_closing();
 		plugin.setup(null, plus);
 		plugin.run(plus.getProcessor());
 	}
+	
 }
