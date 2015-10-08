@@ -12,6 +12,10 @@ import mmlib4j.imagej.utils.ImageUtils;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.utils.AdjacencyRelation;
 
+/**
+ * 
+ * @author rsouza
+ */
 public abstract class AbstractFilterPlugin implements AdjacencyRelationPlugin {
 	
 	private double radius;
@@ -25,11 +29,23 @@ public abstract class AbstractFilterPlugin implements AdjacencyRelationPlugin {
 		setImgPlus(imgPlus);
 		return accepts();
 	}
-
-	public void show(ImageProcessor output) {
-		getImgPlus().setProcessor(getPluginName(), output);
-		getImgPlus().show();
+	
+	@Override
+	public boolean initParameters() {
+		GenericDialog tela = new GenericDialog(getPluginName());
+		tela.addNumericField("Radius", initialRadius(), 1);
+		tela.showDialog();
+		if(tela.wasCanceled()){
+			return false;
+		}
+		radius = tela.getNextNumber();
+		return true;
 	}
+	
+	@Override
+	public int accepts() {
+		return PlugInFilter.DOES_8G | PlugInFilter.DOES_RGB;
+	};
 	
 	@Override
 	public void run(ImageProcessor arg0) {
@@ -42,7 +58,9 @@ public abstract class AbstractFilterPlugin implements AdjacencyRelationPlugin {
 			throw new IllegalArgumentException("Not supported: " + arg0.getClass());
 	}
 
+	@Override
 	public void run(ColorProcessor cp) {
+		//TODO implementing as a single thread for each channel
 		Splitter spliter = new Splitter(cp);
 
 		GrayScaleImage imageR = spliter.getChannel(Channel.RED);
@@ -59,31 +77,28 @@ public abstract class AbstractFilterPlugin implements AdjacencyRelationPlugin {
 
 	}
 	
+	@Override
 	public void run(ByteProcessor bp) {
 		ImageUtils.initMMorph4J();
 		GrayScaleImage output = filterImage(ImageJAdapter.toGrayScaleImage(bp));
 		show(ImageJAdapter.toByteProcessor(output));
 	}
 	
-	@Override
-	public int accepts() {
-		return PlugInFilter.DOES_8G | PlugInFilter.DOES_RGB;
-	};
-
-	@Override
-	public boolean initParameters() {
-		GenericDialog tela = new GenericDialog(getPluginName());
-		tela.addNumericField("Radius", initialRadius(), 1);
-		tela.showDialog();
-		if(tela.wasCanceled()){
-			return false;
-		}
-		radius = tela.getNextNumber();
-		return true;
-	}
-	
+	/**
+	 * Initial Radius used when user is asked to input the radius
+	 * @return
+	 */
 	public double initialRadius(){
 		return 1.5;
+	}
+	
+	/**
+	 * Show the image in the user screen
+	 * @param output image
+	 */
+	public void show(ImageProcessor output) {
+		getImgPlus().setProcessor(getPluginName(), output);
+		getImgPlus().show();
 	}
 
 	@Override
@@ -100,6 +115,5 @@ public abstract class AbstractFilterPlugin implements AdjacencyRelationPlugin {
 	public ImagePlus getImgPlus() {
 		return imgPlus;
 	}
-
 
 }

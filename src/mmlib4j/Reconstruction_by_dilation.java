@@ -64,13 +64,6 @@ public class Reconstruction_by_dilation extends AbstractReconstructionPlugin {
  		setFisrtImage(imp1.getProcessor());
  		setSecondImage(imp2.getProcessor());
  		
-
-// 		if (imp1.getBitDepth()!=8 || imp2.getBitDepth()!=8) {
-// 			IJ.showMessage("Error", "Only 8-bit images are supported");
-// 			return false;
-// 		}
-
- 		
  		return true;
 	}
 

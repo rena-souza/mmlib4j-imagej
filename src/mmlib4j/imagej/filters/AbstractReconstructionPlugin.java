@@ -1,6 +1,7 @@
 package mmlib4j.imagej.filters;
 
 import ij.ImagePlus;
+import ij.plugin.filter.PlugInFilter;
 import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
@@ -8,10 +9,16 @@ import mmlib4j.imagej.types.Channel;
 import mmlib4j.imagej.utils.ImageJAdapter;
 import mmlib4j.images.GrayScaleImage;
 
-public abstract class AbstractReconstructionPlugin extends AbstractFilterPlugin{
+/**
+ * Abastract class for reconstructions plugins
+ * 
+ * @author rsouza
+ */
+public abstract class AbstractReconstructionPlugin implements ReconstructionPlugin{
 	
 	private ImageProcessor ipF;
 	private ImageProcessor ipG;
+	private ImagePlus imgPlus;
 	
 	public void setFisrtImage(ImageProcessor ipf){
 		this.ipF = ipf;
@@ -19,6 +26,20 @@ public abstract class AbstractReconstructionPlugin extends AbstractFilterPlugin{
 	public void setSecondImage(ImageProcessor ip2){
 		this.ipG = ip2;
 	}
+	
+	@Override
+	public int setup(String arg, ImagePlus imgPlus) {
+		if(!initParameters())
+			return PlugInFilter.DONE;
+		
+		setImgPlus(imgPlus);
+		return accepts();
+	}
+	
+	@Override
+	public int accepts() {
+		return PlugInFilter.DOES_8G | PlugInFilter.DOES_RGB;
+	};
 	
 	@Override
 	public void run(ImageProcessor op) {
@@ -30,8 +51,8 @@ public abstract class AbstractReconstructionPlugin extends AbstractFilterPlugin{
 			throw new IllegalArgumentException("Not supported: " + ipF.getClass() + " and " + ipG.getClass());
 	}
 	
-	@Override
 	public void run(ColorProcessor cp) {
+		//TODO implement multythread code here
 		Splitter spliter = new Splitter(cp);
 
 		GrayScaleImage imageR = spliter.getChannel(Channel.RED);
@@ -49,18 +70,25 @@ public abstract class AbstractReconstructionPlugin extends AbstractFilterPlugin{
 		show(rgbOutput);
 	}
 	
-	@Override
-	public GrayScaleImage filterImage(GrayScaleImage image) {
+	public GrayScaleImage run(ByteProcessor bp) {
+		GrayScaleImage image = ImageJAdapter.toGrayScaleImage(bp);
 		return reconstruct(image, ImageJAdapter.toGrayScaleImage((ByteProcessor) ipG));
 	}
-	
-	@Override
+
 	public void show(ImageProcessor output) {
 		ImagePlus plus = new ImagePlus();
 		plus.setProcessor(getPluginName(), output);
 		plus.show();
 	}
 	
-	public abstract GrayScaleImage reconstruct(GrayScaleImage imgF, GrayScaleImage imgG);
+	/* Getters and Setters */
+	public void setImgPlus(ImagePlus imgPlus) {
+		this.imgPlus = imgPlus;
+	}
+	
+	@Override
+	public ImagePlus getImgPlus() {
+		return imgPlus;
+	}
 
 }

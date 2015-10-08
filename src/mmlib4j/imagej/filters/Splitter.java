@@ -5,6 +5,11 @@ import mmlib4j.imagej.types.Channel;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.images.impl.ImageFactory;
 
+/**
+ * Splitter is used to split a RGB image to their separeted channels
+ * 
+ * @author rsouza
+ */
 public class Splitter {
 	
 	private ColorProcessor cp;
