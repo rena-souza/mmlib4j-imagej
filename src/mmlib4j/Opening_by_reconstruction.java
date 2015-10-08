@@ -3,7 +3,7 @@ package mmlib4j;
 import ij.ImagePlus;
 import ij.gui.GenericDialog;
 import mmlib4j.filtering.MorphologicalOperators;
-import mmlib4j.imagej.filters.AbstractColorFilterPlugin;
+import mmlib4j.imagej.filters.AbstractFilterPlugin;
 import mmlib4j.images.GrayScaleImage;
 import mmlib4j.representation.tree.componentTree.ReconstructionMorphological;
 import mmlib4j.utils.AdjacencyRelation;
@@ -13,7 +13,7 @@ import mmlib4j.utils.AdjacencyRelation;
  *
  * Graphic User Interface by ImageJ
  */
-public class Opening_by_reconstruction extends AbstractColorFilterPlugin {
+public class Opening_by_reconstruction extends AbstractFilterPlugin {
 	
 	double raio;
 	double raioEE;

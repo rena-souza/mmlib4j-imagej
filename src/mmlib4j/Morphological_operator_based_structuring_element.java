@@ -17,6 +17,8 @@ import mmlib4j.imagej.utils.ImageUtils;
  */
 public class Morphological_operator_based_structuring_element extends JFrame implements PlugInFilter {
 	
+	private static final long serialVersionUID = 1L;
+	
 	ImagePlus plus;
 	
 	public void run(ImageProcessor ip) { 

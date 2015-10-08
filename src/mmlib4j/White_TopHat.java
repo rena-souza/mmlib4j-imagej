@@ -3,9 +3,8 @@ package mmlib4j;
 
 
 import mmlib4j.filtering.MorphologicalOperators;
-import mmlib4j.imagej.filters.AbstractRadiusPlugin;
+import mmlib4j.imagej.filters.AbstractFilterPlugin;
 import mmlib4j.images.GrayScaleImage;
-import mmlib4j.utils.AdjacencyRelation;
 
 /**
  * MMLib4J - Mathematical Morphology Library for Java 
@@ -13,7 +12,7 @@ import mmlib4j.utils.AdjacencyRelation;
  *
  * Graphic User Interface by ImageJ
  */
-public class White_TopHat extends AbstractRadiusPlugin {
+public class White_TopHat extends AbstractFilterPlugin {
 	
 	@Override
 	public double initialRadius() {
@@ -27,7 +26,7 @@ public class White_TopHat extends AbstractRadiusPlugin {
 	
 	@Override
 	public GrayScaleImage filterImage(GrayScaleImage image) {
-		return MorphologicalOperators.openingTopHat(image, AdjacencyRelation.getCircular(getRadius()));
+		return MorphologicalOperators.openingTopHat(image, getAdjancencyRelation());
 	}
 
 }
